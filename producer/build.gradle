@@ -1,0 +1,32 @@
+plugins {
+    id 'project.java-conventions'
+}
+
+ext {
+    kafkaVersion = '2.7.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.codingsquid.producer.MessageProducer'
+    }
+
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
+dependencies {
+    implementation(project(':core'))
+    implementation("org.apache.kafka:kafka-clients:${kafkaVersion}")
+}

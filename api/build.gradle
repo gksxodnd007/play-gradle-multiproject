@@ -1,0 +1,45 @@
+plugins {
+    id 'project.java-conventions'
+}
+
+application {
+    mainClassName = 'org.codingsquid.api.ApiServerStarter'
+}
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.codingsquid.api.ApiServerStarter'
+    }
+
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
+dependencies {
+    implementation(project(':core'))
+
+    implementation(platform('io.projectreactor:reactor-bom:2020.0.3'))
+    implementation('io.projectreactor.netty:reactor-netty-core')
+    implementation('io.projectreactor.netty:reactor-netty-http')
+
+    testImplementation(platform('org.junit:junit-bom:5.7.1'))
+    testImplementation('org.junit.jupiter:junit-jupiter')
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
